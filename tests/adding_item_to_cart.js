@@ -1,4 +1,4 @@
-import { Selector } from "testcafe";
+import { Selector, ClientFunction } from "testcafe";
 
 const cookieButton = Selector('button[data-role="accept-consent"]');
 const inputItemField = Selector('input[name="string"]');
@@ -11,12 +11,20 @@ const randomItemElement = Selector('section article').nth(1);
 const addToCartButton = Selector('button#add-to-cart-button');
 const goToCartButton = Selector('a[data-analytics-click-label="goToCart"]');
 const itemTitle = Selector('div h1');
+const mainPageUrl = 'https://allegro.pl';
+
+const getItemTitle = Selector('div h1').innerText;
+
+const verifyIfCorrectItem = (title)=>{
+    return Selector("//a[contains(text(), '" + title + "')]")
+}
 
 fixture('Adding items to cart on classic allegro')
-    .beforeEach(async t => await t.maximizeWindow())
-    .page("https://allegro.pl")
+    .meta('category', 'cart')
+    .beforeEach(async t => {await t.maximizeWindow()})
+    .page('')
 
-test('Used item should be added to the cart', async t =>{
+test.page(mainPageUrl)('The used item should be added to the cart', async t =>{
     await t
         .click(cookieButton())
         .typeText(inputItemField, item)
@@ -25,11 +33,12 @@ test('Used item should be added to the cart', async t =>{
         .click(buyNowRadioButton())
         .typeText(inputPriceField(), '2000')
         .click(randomItemElement())
-        .click(addToCartButton())
-        .click(goToCartButton())
-    /*let text = itemTitle().innerText;
-    console.log(text)
+        .click(addToCartButton());
+
+    const title = await itemTitle().innerText;
+    console.log("The title of the item is: " + title)
     await t
-        .expect(await Selector("//a[contains(text(), '" + text + "')]").exists)
-        .debug()*/
+        .click(goToCartButton())
+        .expect(Selector('offer-title').child().child(1).withText(title).exists).ok('W koszyku nie znaleziono oczekiwanego przedmiotu')
+        .debug()
 })
