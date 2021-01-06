@@ -1,22 +1,19 @@
 import { Selector, ClientFunction } from "testcafe";
+import homePage from '../pages/mainPage';
+import itemPage from '../pages/itemPage';
+import * as cartPage from '../pages/cartPage';
 
-const cookieButton = Selector('button[data-role="accept-consent"]');
-const inputItemField = Selector('input[name="string"]');
 const item = 'iPhone 11 PRO';
-const searchButton = Selector('button[data-role = "search-button"]');
-const usedRadioButton = Selector('label').withText('używane');
-const buyNowRadioButton = Selector('label').withText('kup teraz');
-const inputPriceField = Selector('#price_from');
-const randomItemElement = Selector('section article').nth(1);
 const addToCartButton = Selector('button#add-to-cart-button');
 const goToCartButton = Selector('a[data-analytics-click-label="goToCart"]');
-const itemTitleItemPage = Selector('div h1');
 const mainPageUrl = 'https://allegro.pl';
 
 /*
 Preconditions:
 1. Dowolny użytkownik
 2. Bez wcześniej zapisanych cookie
+3. Nie posiada żadnego przedmiotu w koszyku
+
 Steps:
 1. Wejdź na główną stronę allegro.pl i zaznacz "Przejdź dalej" w oknie
 2. Wyszukaj przedmiot
@@ -29,24 +26,25 @@ Steps:
 
 fixture('Adding items to cart on classic allegro')
     .meta('category', 'cart')
-    .beforeEach(async t => {await t.maximizeWindow()})
+    .beforeEach(async t => {
+        await t.maximizeWindow()
+        await homePage.acceptCookie()})
     .page('')
 
 test.page(mainPageUrl)('The used item should be added to the cart', async t =>{
     await t
-        .click(cookieButton())
-        .typeText(inputItemField, item)
-        .click(searchButton())
-        .click(usedRadioButton())
-        .click(buyNowRadioButton())
-        .typeText(inputPriceField(), '2000')
-        .click(randomItemElement())
+        .typeText(homePage.inputItemField(), item)
+        .click(homePage.searchButton())
+        .click(homePage.usedRadioButton())
+        .click(homePage.buyNowRadioButton())
+        .typeText(homePage.inputPriceField(), '2000')
+        .click(homePage.randomItemElement())
         .click(addToCartButton());
 
-    const title = await itemTitleItemPage().innerText;
+    const title = await itemPage.getItemTitle;
     console.log("The title of the item is: " + title)
     await t
-        .click(goToCartButton())
+        .click(cartPage.elements.goToCartButton())
         .expect(Selector('offer-title').child().child(1).withText(title).exists).ok('W koszyku nie znaleziono oczekiwanego przedmiotu')
         //.debug()
 })
