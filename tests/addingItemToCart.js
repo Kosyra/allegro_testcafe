@@ -1,7 +1,8 @@
-import { Selector } from "testcafe";
+import * as constants from '../constants/constants'
 import homePage from '../pages/mainPage';
 import itemPage from '../pages/itemPage';
 import * as cartPage from '../pages/cartPage';
+import mainPage from "../pages/mainPage";
 
 /*
 Preconditions:
@@ -20,7 +21,6 @@ Steps:
 */
 
 const item = 'iPhone 11 PRO';
-const mainPageUrl = 'https://allegro.pl';
 
 fixture('Adding items to cart on classic allegro')
     .meta('category', 'cart')
@@ -29,10 +29,9 @@ fixture('Adding items to cart on classic allegro')
         await homePage.acceptCookie()})
     .page('')
 
-test.page(mainPageUrl)('The used item should be added to the cart', async t =>{
+test.page(constants.url.mainPageUrl)('The used item should be added to the cart', async t =>{
+    await mainPage.searchItem(item);
     await t
-        .typeText(homePage.inputItemField(), item)
-        .click(homePage.searchButton())
         .click(homePage.usedRadioButton())
         .click(homePage.buyNowRadioButton())
         .typeText(homePage.inputPriceField(), '2000')
@@ -43,6 +42,6 @@ test.page(mainPageUrl)('The used item should be added to the cart', async t =>{
     console.log("The title of the item is: " + title)
     await t
         .click(cartPage.elements.goToCartButton())
-        .expect(Selector('offer-title').child().child(1).withText(title).exists).ok('W koszyku nie znaleziono oczekiwanego przedmiotu')
-        .debug()
+        .expect(cartPage.elements.itemTitle().innerText).eql(title)
+        //.debug()
 })
