@@ -1,7 +1,7 @@
 import * as constants from '../constants/constants'
-import mainPage from '../pages/mainPage';
-import itemPage from '../pages/itemPage';
-import * as cartPage from '../pages/cartPage';
+import mainPage from "../pages/mainPage";
+import itemPage from "../pages/itemPage";
+import * as cartPage from '../pages/cartPage'
 
 /*
 Preconditions:
@@ -16,31 +16,29 @@ Steps:
 4. Wybierz dowolny przedmiot z listy dostępnych
 5. Dodaj przedmiot do koszyka
 6. Przejdź do koszyka
-7. Sprawdź czy wybrany przedmiot znajduje się w koszyku
+7. Usuń przedmiot z koszyka
+8. Sprawdź czy pojawia się napis 'Twój koszyk jest pusty'
 */
 
 const item = 'iPhone 11 PRO';
 
-fixture('Adding items to cart on classic allegro')
+fixture('Removing items from the cart on classic allegro')
     .meta('category', 'cart')
-    .beforeEach(async t => {
+    .beforeEach(async t =>{
         await t.maximizeWindow()
         await mainPage.acceptCookie()})
-    .page('')
+    .page(constants.url.mainPageUrl)
 
-test.page(constants.url.mainPageUrl)('The used item should be added to the cart', async t =>{
+test('The used item should be removed from the cart', async t =>{
     await mainPage.searchItem(item);
     await t
         .click(mainPage.usedRadioButton())
         .click(mainPage.buyNowRadioButton())
         .typeText(mainPage.inputPriceField(), '2000')
         .click(mainPage.randomItemElement())
-        .click(itemPage.addToCartButton());
-
-    const title = await itemPage.getItemTitle;
-    console.log("The title of the item is: " + title)
-    await t
+        .click(itemPage.addToCartButton())
         .click(cartPage.elements.goToCartButton())
-        .expect(cartPage.elements.itemTitle().innerText).eql(title)
+        .click(cartPage.elements.buttons.removeItemButton)
+        .expect(cartPage.elements.span.emptyCartSpan().exists).ok()
         //.debug()
 })
