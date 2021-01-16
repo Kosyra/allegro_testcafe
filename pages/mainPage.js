@@ -1,25 +1,27 @@
 import {Selector, t} from 'testcafe'
 
-class MainPage{
-    constructor() {
-        this.cookieButton = Selector('button[data-role="accept-consent"]');
-        this.inputItemField = Selector('input[name="string"]');
-        this.searchButton = Selector('button[data-role = "search-button"]');
-        this.usedRadioButton = Selector('label').withText('używane');
-        this.buyNowRadioButton = Selector('label').withText('kup teraz');
-        this.inputPriceField = Selector('#price_from');
-        this.randomItemElement = Selector('section article').nth(1);
-    }
+export const elements = {
+    button : {
+        cookieButton : Selector('button[data-role="accept-consent"]'),
+        searchButton : Selector('button[data-role = "search-button"]'),
+        usedRadioButton : Selector('label').withText('używane'),
+        buyNowRadioButton : Selector('label').withText('kup teraz'),
+    },
 
-    async acceptCookie(){
-        await t.click(this.cookieButton())
-    }
+    field : {
+        inputItemField : Selector('input[name="string"]'),
+        inputPriceField : Selector('#price_from'),
+    },
 
-    async searchItem(itemName){
-        await t
-            .typeText(this.inputItemField(), itemName)
-            .click(this.searchButton());
-    }
+    randomItemElement : Selector('section article').nth(1)
 }
 
-export default new MainPage();
+export const searchItem = async (itemName) => {
+    await t
+        .typeText(elements.field.inputItemField(), itemName)
+        .click(elements.button.searchButton());
+}
+
+export const acceptCookie = async () => {
+    await t.click(elements.button.cookieButton())
+}

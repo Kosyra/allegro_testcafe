@@ -1,6 +1,6 @@
 import * as constants from '../constants/constants'
-import mainPage from "../pages/mainPage";
-import itemPage from "../pages/itemPage";
+import * as mainPage from "../pages/mainPage";
+import * as itemPage from "../pages/itemPage";
 import * as cartPage from '../pages/cartPage'
 
 /*
@@ -32,13 +32,13 @@ fixture('Removing items from the cart on classic allegro')
 test('The used item should be removed from the cart', async t =>{
     await mainPage.searchItem(item);
     await t
-        .click(mainPage.usedRadioButton())
-        .click(mainPage.buyNowRadioButton())
-        .typeText(mainPage.inputPriceField(), '2000')
-        .click(mainPage.randomItemElement())
-        .click(itemPage.addToCartButton())
-        .click(cartPage.elements.goToCartButton())
-        .click(cartPage.elements.buttons.removeItemButton)
+        .click(mainPage.elements.button.usedRadioButton())
+        .click(mainPage.elements.button.buyNowRadioButton())
+        .typeText(mainPage.elements.field.inputPriceField(), '2000')
+        .click(mainPage.elements.randomItemElement())
+        .click(itemPage.elements.button.addToCartButton())
+        .click(cartPage.elements.button.goToCartButton())
+        .click(cartPage.elements.button.removeItemButton)
         .expect(cartPage.elements.span.emptyCartSpan().exists).ok()
         //.debug()
 })

@@ -1,6 +1,6 @@
 import * as constants from '../constants/constants'
-import mainPage from '../pages/mainPage';
-import itemPage from '../pages/itemPage';
+import * as mainPage from '../pages/mainPage';
+import * as itemPage from '../pages/itemPage';
 import * as cartPage from '../pages/cartPage';
 
 /*
@@ -26,21 +26,21 @@ fixture('Adding items to cart on classic allegro')
     .beforeEach(async t => {
         await t.maximizeWindow()
         await mainPage.acceptCookie()})
-    .page('')
+    .page(constants.url.mainPageUrl)
 
-test.page(constants.url.mainPageUrl)('The used item should be added to the cart', async t =>{
+test('The used item should be added to the cart', async t =>{
     await mainPage.searchItem(item);
     await t
-        .click(mainPage.usedRadioButton())
-        .click(mainPage.buyNowRadioButton())
-        .typeText(mainPage.inputPriceField(), '2000')
-        .click(mainPage.randomItemElement())
-        .click(itemPage.addToCartButton());
+        .click(mainPage.elements.button.usedRadioButton())
+        .click(mainPage.elements.button.buyNowRadioButton())
+        .typeText(mainPage.elements.field.inputPriceField(), '2000')
+        .click(mainPage.elements.randomItemElement())
+        .click(itemPage.elements.button.addToCartButton());
 
-    const title = await itemPage.getItemTitle;
+    const title = await itemPage.getItemTitle();
     console.log("The title of the item is: " + title)
     await t
-        .click(cartPage.elements.goToCartButton())
+        .click(cartPage.elements.button.goToCartButton())
         .expect(cartPage.elements.itemTitle().innerText).eql(title)
         //.debug()
 })
