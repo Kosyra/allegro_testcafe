@@ -1,7 +1,7 @@
 import * as constants from '../constants/constants'
 import mainPage from '../pages/mainPage';
 import itemPage from '../pages/itemPage';
-import * as cartPage from '../pages/cartPage';
+import cartPage from '../pages/cartPage';
 
 /*
 Preconditions:
@@ -40,7 +40,7 @@ test.page(constants.url.mainPageUrl)('The used item should be added to the cart'
     const title = await itemPage.getItemTitle;
     console.log("The title of the item is: " + title)
     await t
-        .click(cartPage.elements.goToCartButton())
-        .expect(cartPage.elements.itemTitle().innerText).eql(title)
+        .click(cartPage.goToCartButton())
+        .expect(cartPage.itemTitle().innerText).eql(title)
         //.debug()
 })
